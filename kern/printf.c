@@ -29,7 +29,8 @@ cprintf(const char *fmt, ...)
 {
 	va_list ap;
 	int cnt;
-
+    
+    //fmt指向显示信息的格式字符串，ap指向所有输入参数的集合
 	va_start(ap, fmt);
 	cnt = vcprintf(fmt, ap);
 	va_end(ap);

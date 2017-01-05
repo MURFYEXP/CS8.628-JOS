@@ -43,7 +43,7 @@ printnum(void (*putch)(int, void*), void *putdat,
 		printnum(putch, putdat, num / base, base, width - 1, padc);
 	} else {
 		// print any needed pad characters before first digit
-		while (--width > 0)
+		while (--width > 0) //当显示需要右对齐时，先把左边补上空格
 			putch(padc, putdat);
 	}
 
@@ -66,10 +66,12 @@ getuint(va_list *ap, int lflag)
 
 // Same as getuint but signed - can't use getuint
 // because of sign extension
+// 根据不同的参数类型，利用va_arg方法从ap参数列表中取出下一个参数
 static long long
 getint(va_list *ap, int lflag)
 {
-	if (lflag >= 2)
+	if (lflag >= 2) //根据你的整数类型到底是int，
+        //还是long，还是long long，从参数列表ap中取出相应类型的参数
 		return va_arg(*ap, long long);
 	else if (lflag)
 		return va_arg(*ap, long);
@@ -81,12 +83,15 @@ getint(va_list *ap, int lflag)
 // Main function to format and print a string.
 void printfmt(void (*putch)(int, void*), void *putdat, const char *fmt, ...);
 
-// void (*putch)(int, void*) 这个参数是一个函数指针，这类函数包含两个输入参数int, void*，int参数代表一个要输出的字符的值
+// void (*putch)(int, void*) 这个参数是一个函数指针，是一个显示字符的子程序。这类函数包含两个输入参数int, void*，int参数代表一个要输出的字符的值
 // void *putdat 输入的字符要存放在的内存地址的指针
 // const char *fmt 指定格式的字符串，即printf函数的第一个输入参数，比如printf("This is %d test", n)，这个子程序中，fmt就是"This is %d test"
 // va_list ap 多个输入参数，即printf子程序中从第二个参数开始之后的参数，比如("These are %d test and %d test", n, m)，那么ap指的就是n，m
 
 
+//具体实现细节，之后调试分析
+//不停的分析格式字符串fmt,分析%号后面的内容.
+//分析采取的方式:把格式字符串划分成多个部分，每个部分都至多带有一个待显示的参数
 void
 vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 {
@@ -112,6 +117,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		precision = -1;
 		lflag = 0;
 		altflag = 0;
+        
 	reswitch:
         //处理'%'符号后面的格式化输出，比如是%d，则按照十进制输出对应参数
         //另外还有一些其他的特殊字符比如'%5d'代表显示5位，其中的5要特殊处理
@@ -171,8 +177,11 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 		// character
 		case 'c':
 			putch(va_arg(ap, int), putdat);
+            
 			break;
-
+        // Color
+        
+                
 		// error message
 		case 'e':
 			err = va_arg(ap, int);
@@ -202,9 +211,9 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 
 		// (signed) decimal
 		case 'd':
-			num = getint(&ap, lflag);
+			num = getint(&ap, lflag); //num中存放的是待显示的值
 			if ((long long) num < 0) {
-				putch('-', putdat);
+				putch('-', putdat); //如果输入参数是负数，先输出一个负号
 				num = -(long long) num;
 			}
 			base = 10;
@@ -239,6 +248,7 @@ vprintfmt(void (*putch)(int, void*), void *putdat, const char *fmt, va_list ap)
 			num = getuint(&ap, lflag);
 			base = 16;
 		number:
+            //按照指定的进制，以及格式显示你刚刚取到的参数
 			printnum(putch, putdat, num, base, width, padc);
 			break;
 

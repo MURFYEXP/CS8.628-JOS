@@ -9,6 +9,7 @@
 
 #include <kern/console.h>
 
+//除了被static修饰符修饰的函数之外，都可以被外部所使用
 static void cons_intr(int (*proc)(void));
 static void cons_putc(int c);
 
@@ -126,10 +127,11 @@ lpt_putc(int c)
 
 
 /***** Text-mode CGA/VGA display output *****/
-
+//80x25文字模式与屏幕驱动器cga显示输出
 static unsigned addr_6845;
-static uint16_t *crt_buf;
-static uint16_t crt_pos;
+static uint16_t *crt_buf; //字符数组缓冲区，里面存放要显示到屏幕上的字符
+static uint16_t crt_pos;  //下一个要显示的字符存放在数组中的位置
+
 
 static void
 cga_init(void)
@@ -160,11 +162,13 @@ cga_init(void)
 }
 
 
-
+//指定显示的位置，和显示字符给屏幕驱动器cga
+//把字符c显示到屏幕当前显示的下一个位置
 static void
 cga_putc(int c)
 {
 	// if no attribute given, then use black on white
+    // 检测c的8bit以上是否为0,如果是，那么黑白显示打印的字符
 	if (!(c & ~0xFF))
 		c |= 0x0700;
 
@@ -193,14 +197,16 @@ cga_putc(int c)
 		break;
 	}
 
-	// What is the purpose of this?
+    //如果buffer满了,把屏幕第一行覆盖掉逐行上移，空出最后一行，并由for循环填充以‘ ’(空格)
+    //最后把crt_pos置于最后一行的行首
 	if (crt_pos >= CRT_SIZE) {
 		int i;
-
+        //CRT_SIZE = 80*25,crt_pos取值范围:0~(80*25-1)
+        //把第二个参数指向的地址移动n byte到第一个参数指向的地址，这里n byte由第三个参数指定
 		memmove(crt_buf, crt_buf + CRT_COLS, (CRT_SIZE - CRT_COLS) * sizeof(uint16_t));
 		for (i = CRT_SIZE - CRT_COLS; i < CRT_SIZE; i++)
 			crt_buf[i] = 0x0700 | ' ';
-		crt_pos -= CRT_COLS;
+		crt_pos -= CRT_COLS; //crt_pos置于最后一行行首
 	}
 
 	/* move that little blinky thing */
@@ -449,7 +455,7 @@ cons_init(void)
 
 
 // `High'-level console I/O.  Used by readline and cprintf.
-//cputchar的功能:向屏幕上输出一个字符
+//cputchar的功能:向屏幕上输出一个字符，被printf所使用
 void
 cputchar(int c)
 {
