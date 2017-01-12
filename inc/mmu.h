@@ -46,6 +46,7 @@
 #define NPDENTRIES	1024		// page directory entries per page directory
 #define NPTENTRIES	1024		// page table entries per page table
 
+// 页面大小：4096 bytes
 #define PGSIZE		4096		// bytes mapped by a page
 #define PGSHIFT		12		// log2(PGSIZE)
 
@@ -56,6 +57,7 @@
 #define PDXSHIFT	22		// offset of PDX in a linear address
 
 // Page table/directory entry flags.
+// 页目录表项/页表项的标志位
 #define PTE_P		0x001	// Present
 #define PTE_W		0x002	// Writeable
 #define PTE_U		0x004	// User
@@ -74,6 +76,7 @@
 #define PTE_SYSCALL	(PTE_AVAIL | PTE_P | PTE_W | PTE_U)
 
 // Address in page table or page directory entry
+// 页表表项/页目录表项的物理地址
 #define PTE_ADDR(pte)	((physaddr_t) (pte) & ~0xFFF)
 
 // Control Register flags

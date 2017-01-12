@@ -184,6 +184,8 @@ struct PageInfo {
 	// boot_alloc do not have valid reference count fields.
 
     // 页面状态：空闲/占用
+    // 多个不同的虚拟地址被同时映射到相同的物理页上,PageInfo结构体的pp_ref
+    // 被位于虚拟地址UTOP之下的虚拟页所映射的次数
 	uint16_t pp_ref;
 };
 

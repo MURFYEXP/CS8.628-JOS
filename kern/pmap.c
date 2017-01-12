@@ -201,6 +201,7 @@ mem_init(void)
 	//    - pages itself -- kernel RW, user NONE
 	// Your code goes here:
     
+    
 
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
@@ -224,6 +225,7 @@ mem_init(void)
 	// we just set up the mapping anyway.
 	// Permissions: kernel RW, user NONE
 	// Your code goes here:
+    
     
 
 	// Check that the initial page directory has been set up correctly.
@@ -342,6 +344,7 @@ page_alloc(int alloc_flags)
     page_free_list = result->pp_link;
     result->pp_link = NULL;
     
+    
     if (alloc_flags & ALLOC_ZERO)
         memset(page2kva(result), 0, PGSIZE);
     
@@ -401,11 +404,28 @@ page_decref(struct PageInfo* pp)
 // Hint 3: look at inc/mmu.h for useful macros that mainipulate page
 // table and page directory entries.
 //
+
+// 给出线性地址,返回线性地址对应的二级页表的页表项(PTE)的虚拟地址
 pte_t *
 pgdir_walk(pde_t *pgdir, const void *va, int create)
 {
 	// Fill this function in
-	return NULL;
+    int dindex = PDX(va), tindex = PTX(va);
+	//dir index, table index
+	if (!(pgdir[dindex] & PTE_P)) {	//页表不存在
+		if (create)
+        {
+			struct PageInfo *pg = page_alloc(ALLOC_ZERO);	//alloc a zero page
+			if (!pg)
+                return NULL;	//allocation fails
+			pg->pp_ref++;
+			pgdir[dindex] = page2pa(pg) | PTE_P | PTE_U | PTE_W;
+		}
+        else
+            return NULL;
+	}
+	pte_t *p = KADDR(PTE_ADDR(pgdir[dindex]));
+    return p + tindex;
 }
 
 //
@@ -419,6 +439,7 @@ pgdir_walk(pde_t *pgdir, const void *va, int create)
 // mapped pages.
 //
 // Hint: the TA solution uses pgdir_walk
+
 static void
 boot_map_region(pde_t *pgdir, uintptr_t va, size_t size, physaddr_t pa, int perm)
 {
