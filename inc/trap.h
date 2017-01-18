@@ -3,6 +3,7 @@
 
 // Trap numbers
 // These are processor defined:
+// 中断向量的类型
 #define T_DIVIDE     0		// divide error
 #define T_DEBUG      1		// debug exception
 #define T_NMI        2		// non-maskable interrupt
@@ -26,7 +27,7 @@
 
 // These are arbitrarily chosen, but with care not to overlap
 // processor defined exceptions or interrupt vectors.
-#define T_SYSCALL   48		// system call
+#define T_SYSCALL   48		// system call 
 #define T_DEFAULT   500		// catchall
 
 #define IRQ_OFFSET	32	// IRQ 0 corresponds to int IRQ_OFFSET
@@ -61,7 +62,7 @@ struct Trapframe {
 	uint16_t tf_padding1;
 	uint16_t tf_ds;
 	uint16_t tf_padding2;
-	uint32_t tf_trapno;
+	uint32_t tf_trapno;   // 中断类型号
 	/* below here defined by x86 hardware */
 	uint32_t tf_err;
 	uintptr_t tf_eip;

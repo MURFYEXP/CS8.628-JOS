@@ -50,6 +50,7 @@
 #define PGSIZE		4096		// bytes mapped by a page
 #define PGSHIFT		12		// log2(PGSIZE)
 
+// 页表所映射的物理空间大小 4096 * 1024
 #define PTSIZE		(PGSIZE*NPTENTRIES) // bytes mapped by a page directory entry
 #define PTSHIFT		22		// log2(PTSIZE)
 
@@ -153,6 +154,7 @@
 #include <inc/types.h>
 
 // Segment Descriptors
+// 段描述符
 struct Segdesc {
 	unsigned sd_lim_15_0 : 16;  // Low bits of segment limit
 	unsigned sd_base_15_0 : 16; // Low bits of segment base address
@@ -216,6 +218,7 @@ struct Segdesc {
 #ifndef __ASSEMBLER__
 
 // Task state segment format (as described by the Pentium architecture book)
+// TSS:任务的所有状态信息
 struct Taskstate {
 	uint32_t ts_link;	// Old ts selector
 	uintptr_t ts_esp0;	// Stack pointers and segment selectors
@@ -257,6 +260,7 @@ struct Taskstate {
 };
 
 // Gate descriptors for interrupts and traps
+// 中断/异常 中断门结构
 struct Gatedesc {
 	unsigned gd_off_15_0 : 16;   // low 16 bits of offset in segment
 	unsigned gd_sel : 16;        // segment selector
@@ -264,7 +268,7 @@ struct Gatedesc {
 	unsigned gd_rsv1 : 3;        // reserved(should be zero I guess)
 	unsigned gd_type : 4;        // type(STS_{TG,IG32,TG32})
 	unsigned gd_s : 1;           // must be 0 (system)
-	unsigned gd_dpl : 2;         // descriptor(meaning new) privilege level
+	unsigned gd_dpl : 2;         // descriptor(meaning new) privilege level (dpl特权级)
 	unsigned gd_p : 1;           // Present
 	unsigned gd_off_31_16 : 16;  // high bits of offset in segment
 };

@@ -3,14 +3,15 @@
 
 #define ELF_MAGIC 0x464C457FU	/* "\x7FELF" in little endian */
 
+//elf文件头
 struct Elf {
-	uint32_t e_magic;	// must equal ELF_MAGIC
+	uint32_t e_magic;	//must equal ELF_MAGIC标志文件是否是elf文件
 	uint8_t e_elf[12];
-	uint16_t e_type;
+	uint16_t e_type;    //文件类型
 	uint16_t e_machine;
 	uint32_t e_version;
-	uint32_t e_entry;
-	uint32_t e_phoff;  //Program Header Table距离表头的偏移量
+	uint32_t e_entry;   //程序入口，虚拟地址，也就是链接地址
+	uint32_t e_phoff;   //Program Header Table表头的偏移量
 	uint32_t e_shoff;
 	uint32_t e_flags;
 	uint16_t e_ehsize;
@@ -22,10 +23,11 @@ struct Elf {
 };
 
 //memsz一定大于等于filesz，因为段在文件中时许多未定义的变量并没有分配空间给它们
+//段表项
 struct Proghdr {
-	uint32_t p_type;
+	uint32_t p_type;  //段类型
 	uint32_t p_offset;//相对于elf文件的开头的偏移量
-	uint32_t p_va;
+	uint32_t p_va;    ////段在内存中的虚拟地址
 	uint32_t p_pa;    //段在内存中的物理地址
 	uint32_t p_filesz;//段在elf文件中的大小
 	uint32_t p_memsz; //段被实际装入内存后的大小
@@ -33,6 +35,7 @@ struct Proghdr {
 	uint32_t p_align;
 };
 
+//节表项
 struct Secthdr {
 	uint32_t sh_name;
 	uint32_t sh_type;

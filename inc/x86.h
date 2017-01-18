@@ -137,6 +137,8 @@ outl(int port, uint32_t data)
 	__asm __volatile("outl %0,%w1" : : "a" (data), "d" (port));
 }
 
+// 这段嵌入式汇编是没有输出的.把addr读入到寄存器中去(这里r指定任意常用寄存器)，
+// %0则指向addr所在的寄存器
 static __inline void
 invlpg(void *addr)
 {

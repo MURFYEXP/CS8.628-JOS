@@ -9,6 +9,7 @@
 
 typedef int32_t envid_t;
 
+
 // An environment ID 'envid_t' has three parts:
 //
 // +1+---------------21-----------------+--------10--------+
@@ -25,9 +26,13 @@ typedef int32_t envid_t;
 // envid_ts less than 0 signify errors.  The envid_t == 0 is special, and
 // stands for the current environment.
 
+// 31位被固定为0；第10~30这21位是标识符，标示这个用户环境；第0~9位代表这个用户环境所采
+// 用的 Env 结构体，在envs数组中的索引
+
 // evns 数组就等价于 PCB 表,其共有1024(NENV)个表项,即JOS系统并发度为1024
 #define LOG2NENV		10
 #define NENV			(1 << LOG2NENV)
+// 当前用户env在数组中的下标
 #define ENVX(envid)		((envid) & (NENV - 1))
 
 // Values of env_status in struct Env

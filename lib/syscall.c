@@ -21,7 +21,7 @@ syscall(int num, int check, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, 
 	// memory locations.
 
 	asm volatile("int %1\n"
-		: "=a" (ret)
+		: "=a" (ret)      //ret值保存在eax寄存器中
 		: "i" (T_SYSCALL),
 		  "a" (num),
 		  "d" (a1),

@@ -12,11 +12,11 @@
  */
 
 // Global descriptor numbers
-#define GD_KT     0x08     // kernel text
-#define GD_KD     0x10     // kernel data
-#define GD_UT     0x18     // user text
-#define GD_UD     0x20     // user data
-#define GD_TSS0   0x28     // Task segment selector for CPU 0
+#define GD_KT     0x08     // kernel text 内核代码段
+#define GD_KD     0x10     // kernel data 内核数据段
+#define GD_UT     0x18     // user text   用户代码段
+#define GD_UD     0x20     // user data   用户数据段
+#define GD_TSS0   0x28     // Task segment selector for CPU 0 任务段选择符
 
 /*
  * Virtual memory map:                                Permissions
