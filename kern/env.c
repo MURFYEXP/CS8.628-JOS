@@ -522,6 +522,8 @@ env_destroy(struct Env *e)
 //
 // This function does not return.
 //
+
+// 内核态切换到用户态
 void
 env_pop_tf(struct Trapframe *tf)
 {
@@ -570,7 +572,6 @@ env_run(struct Env *e)
     e->env_runs++;
     lcr3(PADDR(e->env_pgdir));
     env_pop_tf(&e->env_tf);
-    
 	//panic("env_run not yet implemented");
 }
 
